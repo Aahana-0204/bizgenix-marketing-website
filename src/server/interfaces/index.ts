@@ -1,6 +1,6 @@
 import type { BookingInput } from "@/shared/schemas";
 
-export type BookingRecord = Omit<BookingInput, "slotStart" | "website"> & { id: string; slotStart: Date; slotEnd: Date };
+export type BookingRecord = Omit<BookingInput, "slotStart" | "website" | "interest" | "message"> & { id: string; slotStart: Date; slotEnd: Date; interest: string; message?: string | null };
 export interface IClock { now(): Date }
 export interface ISlotPolicy { validate(start: Date, now: Date): void }
 export interface IBookingRepository {

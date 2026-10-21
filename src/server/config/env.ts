@@ -7,4 +7,8 @@ const schema = z.object({
   BOOKING_DAILY_LIMIT: z.coerce.number().int().min(1).max(20).default(3),
   BOOKING_HOLIDAYS: z.string().default("").transform(value => value.split(",").map(day => day.trim()).filter(Boolean)),
 });
-export function getEnv() { return schema.parse(process.env); }
+export function getEnv() {
+  const result = schema.safeParse(process.env);
+  if (!result.success) throw new Error("Server configuration is incomplete or invalid");
+  return result.data;
+}

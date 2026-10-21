@@ -1,0 +1,1 @@
+export const navigation = [["About", "/about"], ["Custom Solution", "/custom-solution"], ["Product", "/product"], ["Learning", "/learning"], ["Case Study", "/case-study"], ["Insights", "/insights"], ["Contact Us", "/contact"]] as const;
