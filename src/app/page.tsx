@@ -1,69 +1,8 @@
-import Image from "next/image";
-
+import Link from "next/link";
+import { ArrowUpRight, ChartNoAxesCombined, MessagesSquare, Workflow, AudioLines, Bot, Layers, Check, MoveUpRight } from "lucide-react";
+import { Hero } from "@/components/sections/Hero";
+import { PromoCarousel } from "@/components/sections/PromoCarousel";
+import { Stats } from "@/components/sections/Stats";
 export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+  return <main id="main-content"><Hero /><PromoCarousel /><section className="ecosystem container"><p className="eyebrow">BUILT FOR THE PLACES AMBITION HAPPENS</p><div className="marquee"><div>{[0, 1].map(copy => <div key={copy} aria-hidden={copy === 1}>{["STARTUP ECOSYSTEMS", "LEARNING COMMUNITIES", "GROWING BUSINESSES", "INNOVATION HUBS"].map((name, i) => <span key={name}><span className="institution-mark">{["◈", "✳", "▦", "◎"][i]}</span>{name}</span>)}</div>)}</div></div><p className="fine-print">Connecting ideas, teams, and practical technology.</p></section><section className="section section-mint" id="improve"><div className="container"><div className="section-heading"><p className="eyebrow">START WITH WHAT MATTERS TO YOU</p><h2>What would you<br />like to <span>improve?</span></h2><p>Every business has its bottlenecks. Let’s make yours a little smaller.</p></div><div className="cards-three">{[{ Icon: ChartNoAxesCombined, title: "Grow without the guesswork.", text: "Connect the dots between your leads, conversations, and next big opportunity.", link: "Find your growth engine", href: "/product#growth-intelligence" }, { Icon: MessagesSquare, title: "Make every customer feel heard.", text: "Keep conversations moving, questions answered, and good relationships growing.", link: "Get closer to customers", href: "/product#bizchat" }, { Icon: Workflow, title: "Give your team their time back.", text: "Take repeat tasks off the daily to-do list. Put your people where they make a difference.", link: "Simplify the everyday", href: "/custom-solution" }].map(({ Icon, title, text, link, href }, i) => <article className="card improve-card" key={title}><div className="card-top"><span className="icon-tile"><Icon size={26} /></span><span className="card-number">0{i + 1}</span></div><h3>{title}</h3><p>{text}</p><Link className="text-link" href={href}>{link}<ArrowUpRight size={18} /></Link></article>)}</div></div></section><section className="section" id="products"><div className="container"><div className="section-heading heading-row"><div><p className="eyebrow">SMART TOOLS. REAL-WORLD WORK.</p><h2>Meet your new<br /><span>unfair advantage.</span></h2></div><div><p>A connected toolkit for the way<br />your business actually runs.</p><Link href="/product" className="text-link">Explore all products <ArrowUpRight size={18} /></Link></div></div><div className="product-grid"><Link href="/product#growth-intelligence" className="product-feature"><div className="product-title"><span className="product-icon"><ChartNoAxesCombined /></span><span>Growth Intelligence<small>FROM INFORMATION TO YOUR NEXT MOVE</small></span><ArrowUpRight /></div><div className="growth-art" aria-label="Illustrative growth dashboard"><div className="art-label">YOUR NEXT OPPORTUNITY <span>↗</span></div><strong>See the bigger picture.</strong><div className="chart-bars">{[25, 40, 33, 58, 46, 70, 61, 88, 79, 100].map((height, i) => <span key={i} style={{ height: `${height}%` }} />)}</div><div className="chart-caption"><span>Clarity in every signal</span><span><Check size={12} /> Connected</span></div></div><p>Turn scattered signals into a clearer path to growth.</p></Link><div className="product-stack">{[{ Icon: Layers, title: "CRM", text: "More relationships. Fewer loose ends.", slug: "crm" }, { Icon: Workflow, title: "ScaleOS", text: "Bring your people and processes together.", slug: "scaleos" }, { Icon: AudioLines, title: "Voice AI", text: "A helpful voice. Whenever it’s needed.", slug: "voice-ai" }, { Icon: Bot, title: "BizChat", text: "Keep the conversation going.", slug: "bizchat" }].map(({ Icon, title, text, slug }) => <Link className="product-row" href={`/product#${slug}`} key={title}><span className="icon-tile"><Icon /></span><div><h3>{title}</h3><p>{text}</p></div><ArrowUpRight size={21} /></Link>)}</div></div></div></section><Stats /><section className="section"><div className="container"><div className="section-heading heading-row"><div><p className="eyebrow">IDEAS WORTH MAKING TIME FOR</p><h2>A little insight.<br /><span>A lot of possibility.</span></h2></div><Link href="/insights" className="text-link">Explore insights <ArrowUpRight size={18} /></Link></div><div className="cards-three">{[{ category: "SOLUTION EXAMPLE", title: "What happens when the follow-up follows itself?", text: "Explore a lead-to-conversation workflow for a growing team.", href: "/case-study", art: "flow", Icon: Workflow }, { category: "PRACTICAL AI", title: "Your first automation doesn’t need to be your biggest.", text: "A simple framework for choosing where to start.", href: "/insights", art: "idea", Icon: Bot }, { category: "THE LEARNING HUB", title: "Get comfortable with what AI can do for you.", text: "Clear explanations. Useful questions. No jargon required.", href: "/learning", art: "learn", Icon: Layers }].map(({ category, title, text, href, art, Icon }) => <Link className="editorial-card" key={title} href={href}><div className={`editorial-art ${art}`}><div className="art-orbit" /><Icon size={58} strokeWidth={1.2} /><span className="article-arrow"><MoveUpRight size={20} /></span></div><p className="eyebrow">{category}</p><h3>{title}</h3><p>{text}</p></Link>)}</div></div></section></main>;
 }
