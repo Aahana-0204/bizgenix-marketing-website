@@ -2,6 +2,8 @@
 
 Next.js App Router, strict TypeScript and a mobile-first Bizgenix landing page. Includes approved content, accessible Radix navigation/dialogs/FAQ/selects, separate demo and pricing enquiries, PostgreSQL lead capture, Cal.com lifecycle handling, delivery outbox and consent-aware marketing tracking.
 
+Booking now defaults to direct Google Calendar for Pranesh and Khushi, assigning one available host to each 30-minute appointment. See [Google Calendar setup](docs/GOOGLE_CALENDAR_SETUP.md) for OAuth credentials, host consent, database migration and live verification. Cal.com remains an optional legacy adapter via `SCHEDULING_PROVIDER=calcom`.
+
 ## Run
 
 Use Node.js 24 and pnpm 10.34.7. On Windows, use `pnpm.cmd` if PowerShell blocks script shims.

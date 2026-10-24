@@ -22,6 +22,60 @@ export const envSchema = z
     NEXT_PUBLIC_PRIVACY_URL: optionalUrl,
     NEXT_PUBLIC_TERMS_URL: optionalUrl,
     NEXT_PUBLIC_CALCOM_LINK: optionalText,
+    SCHEDULING_PROVIDER: z.enum(["google", "calcom"]).default("google"),
+    GOOGLE_CLIENT_ID: optionalText,
+    GOOGLE_CLIENT_SECRET: optionalText,
+    GOOGLE_CALENDAR_CREATE_MEET: z.enum(["true", "false"]).default("false"),
+    GOOGLE_CALENDAR_HOST_EMAILS: z.preprocess(
+      (v) => (v === "" ? undefined : v),
+      z
+        .string()
+        .refine((v) => {
+          const emails = v.split(",").map((s) => s.trim().toLowerCase());
+          return (
+            emails.length === 2 &&
+            new Set(emails).size === 2 &&
+            emails.every((email) => z.email().safeParse(email).success)
+          );
+        }, "Configure two different Google Calendar email addresses")
+        .optional(),
+    ),
+    GOOGLE_CALENDAR_TOKEN_KEY: z.preprocess(
+      (v) => (v === "" ? undefined : v),
+      z
+        .string()
+        .regex(/^[a-f0-9]{64}$/i, "Use a 32-byte hex encryption key")
+        .optional(),
+    ),
+    GOOGLE_CALENDAR_SETUP_SECRET: z.preprocess(
+      (v) => (v === "" ? undefined : v),
+      z.string().min(32).optional(),
+    ),
+    BOOKING_DURATION_MINUTES: z.coerce
+      .number()
+      .int()
+      .min(10)
+      .max(120)
+      .default(30),
+    BOOKING_BUFFER_MINUTES: z.coerce.number().int().min(0).max(120).default(10),
+    BOOKING_NOTICE_MINUTES: z.coerce
+      .number()
+      .int()
+      .min(0)
+      .max(10080)
+      .default(120),
+    BOOKING_HORIZON_DAYS: z.coerce.number().int().min(1).max(90).default(30),
+    BOOKING_START_HOUR: z.coerce
+      .number()
+      .multipleOf(0.5)
+      .min(0)
+      .max(23.5)
+      .default(10.5),
+    BOOKING_END_HOUR: z.coerce.number().int().min(1).max(24).default(18),
+    BOOKING_WEEKDAYS: z
+      .string()
+      .regex(/^[0-6](,[0-6])*$/)
+      .default("1,2,3,4,5"),
     NEXT_PUBLIC_GTM_ID: z.preprocess(
       (v) => (v === "" ? undefined : v),
       z
@@ -62,6 +116,12 @@ export const envSchema = z
     META_TEST_EVENT_CODE: optionalText,
   })
   .superRefine((env, ctx) => {
+    if (env.BOOKING_END_HOUR <= env.BOOKING_START_HOUR)
+      ctx.addIssue({
+        code: "custom",
+        path: ["BOOKING_END_HOUR"],
+        message: "End hour must follow start hour",
+      });
     const require = (key: keyof typeof env) => {
       if (!env[key])
         ctx.addIssue({
@@ -94,13 +154,21 @@ export const envSchema = z
           "UPSTASH_REDIS_REST_TOKEN",
           "RESEND_API_KEY",
           "EMAIL_FROM",
-          "NEXT_PUBLIC_CALCOM_LINK",
-          "CALCOM_WEBHOOK_SECRET",
           "CRON_SECRET",
           "NEXT_PUBLIC_CONTACT_EMAIL",
           "ROUTE_QUALIFIER_EMAIL",
           "ROUTE_PRESENTER_EMAILS",
         ] as const
+      ).forEach(require);
+      (env.SCHEDULING_PROVIDER === "google"
+        ? ([
+            "GOOGLE_CLIENT_ID",
+            "GOOGLE_CLIENT_SECRET",
+            "GOOGLE_CALENDAR_HOST_EMAILS",
+            "GOOGLE_CALENDAR_TOKEN_KEY",
+            "GOOGLE_CALENDAR_SETUP_SECRET",
+          ] as const)
+        : (["NEXT_PUBLIC_CALCOM_LINK", "CALCOM_WEBHOOK_SECRET"] as const)
       ).forEach(require);
       if (env.CRM_CONTRACT_VERIFIED !== "true")
         ctx.addIssue({

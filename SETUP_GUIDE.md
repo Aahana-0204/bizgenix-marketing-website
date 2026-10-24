@@ -77,7 +77,11 @@ Do not use the Redis TCP password in place of the REST token. [Official connecti
 
 The app uses per-recipient idempotency keys. Inspect [Resend domain instructions](https://resend.com/docs/dashboard/domains/introduction) and [idempotency retention](https://resend.com/docs/dashboard/emails/idempotency-keys) when operating retries.
 
-## 5. Cal.com scheduling and signed webhook
+## 5. Scheduling
+
+**Current setup: direct Google Calendar, one available host, 30-minute demos.** Follow [Google Calendar setup](docs/GOOGLE_CALENDAR_SETUP.md) to configure OAuth, migrate the database and connect Pranesh and Khushi. Cal.com is not required for this path. The instructions below are only for the optional legacy adapter (`SCHEDULING_PROVIDER=calcom`).
+
+### Legacy Cal.com scheduling and signed webhook
 
 1. Create/sign in to the approved Cal.com workspace. Invite Pranesh and Khushi to the team.
 2. Each presenter opens **Settings → Calendars**, connects the actual calendar, selects conflict calendars and the calendar receiving bookings, and sets availability/timezone.

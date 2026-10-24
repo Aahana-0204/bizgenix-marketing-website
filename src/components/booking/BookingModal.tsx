@@ -15,6 +15,14 @@ const CalEmbed = dynamic(() => import("./CalEmbed"), {
     </div>
   ),
 });
+const GoogleCalendarSlots = dynamic(() => import("./GoogleCalendarSlots"), {
+  ssr: false,
+  loading: () => (
+    <div className="loading-modal" role="status">
+      Loading available times…
+    </div>
+  ),
+});
 export type ConfirmedBooking = {
   status: string;
   startAt: string;
@@ -95,8 +103,9 @@ export default function BookingModal({
           </div>
           <h3>You’re booked.</h3>
           <p>
-            Your booking is confirmed. Cal.com sends the confirmation and
-            cancellation or rescheduling details to your email.
+            {config.schedulingProvider === "google"
+              ? "Your appointment is confirmed. Google Calendar sends an invitation to your email. Contact the organizer through the invitation if you need to change your time."
+              : "Your booking is confirmed. Cal.com sends the confirmation and cancellation or rescheduling details to your email."}
           </p>
           <div className="meeting-detail">
             {new Intl.DateTimeFormat("en-IN", {
@@ -119,6 +128,18 @@ export default function BookingModal({
             </a>
           )}
         </div>
+      ) : config.schedulingProvider === "google" ? (
+        <>
+          <p className="calendar-saved">
+            <Icon name="check" size={15} />
+            Your details are saved.
+          </p>
+          <GoogleCalendarSlots
+            config={config}
+            lead={lead.result}
+            onConfirmed={setBooking}
+          />
+        </>
       ) : (
         <CalEmbed config={config} lead={lead} onConfirmed={setBooking} />
       )}

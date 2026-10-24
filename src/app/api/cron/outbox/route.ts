@@ -3,6 +3,8 @@ import { env } from "@/config/server";
 import { handle, json } from "@/infrastructure/http";
 import { safeEqual } from "@/lib/security";
 import { AppError } from "@/application/CreateOrUpdateLead";
+import { googleScheduling } from "@/composition/google-calendar";
+import { reportFailure } from "@/infrastructure/logger";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 async function process(request: Request) {
@@ -15,6 +17,19 @@ async function process(request: Request) {
       )
     )
       throw new AppError(401, "Unauthorized.");
+    if (
+      env.SCHEDULING_PROVIDER === "google" &&
+      env.DATABASE_URL &&
+      env.GOOGLE_CLIENT_ID
+    ) {
+      try {
+        const recovery = await googleScheduling().reconcilePending();
+        if (recovery.failed)
+          reportFailure("GOOGLE_PENDING_BOOKING_RECOVERY_FAILED");
+      } catch {
+        reportFailure("GOOGLE_PENDING_BOOKING_RECOVERY_FAILED");
+      }
+    }
     return json(await container().outbox.execute());
   });
 }

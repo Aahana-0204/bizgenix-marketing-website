@@ -2806,3 +2806,684 @@ h2 {
 .plan-accent .eyebrow {
   color: #246342;
 }
+
+/* Visual refinement of the original landing page. Layout and content stay intact. */
+:root {
+  --ink: #20372a;
+  --muted: #5a6c60;
+  --deep: #286e48;
+  --green: #5b9c67;
+  --line: #dce7dc;
+  --cream: #f6f9f3;
+}
+html {
+  scroll-snap-type: none;
+}
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+h2 {
+  line-height: 1.17;
+}
+.section-body {
+  font-size: 15px;
+  line-height: 1.85;
+}
+.eyebrow {
+  font-weight: 650;
+}
+.site-header {
+  background: #f9fcf8ed;
+  border-bottom-color: #dce8d9;
+  box-shadow: 0 3px 20px #21472c04;
+}
+.brand-wordmark {
+  font-weight: 700;
+  letter-spacing: -0.65px;
+}
+.desktop-nav a {
+  font-size: 12px;
+  transition: color 0.2s;
+}
+.nav-start {
+  font-size: 12px;
+}
+.button {
+  border-radius: 9px;
+  font-size: 13px;
+  min-height: 52px;
+  box-shadow: 0 4px 10px #2153340d;
+  transition:
+    background 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s,
+    border-color 0.2s;
+}
+.button:hover {
+  box-shadow: 0 8px 22px #21533420;
+}
+.button.secondary {
+  border-color: #ccdccc;
+  box-shadow: 0 2px 5px #254a2f04;
+}
+.button.secondary:hover {
+  border-color: #a6c2a5;
+}
+.button.small {
+  font-size: 11px;
+  min-height: 44px;
+}
+.text-button {
+  font-size: 13px;
+}
+.hero {
+  background: linear-gradient(180deg, #eef7e9 0%, #f7fbf4 66%, #fff 100%);
+  padding-top: 74px;
+}
+.hero-glow {
+  background:
+    radial-gradient(ellipse at 15% 30%, #c8e4b745, transparent 44%),
+    radial-gradient(ellipse at 85% 45%, #d9ecc975, transparent 48%);
+}
+.hero .eyebrow {
+  font-size: 10px;
+  letter-spacing: 2.3px;
+}
+.hero h1 {
+  font-size: clamp(42px, 5vw, 72px);
+  line-height: 1.08;
+  letter-spacing: -3.1px;
+  margin: 25px auto 23px;
+  max-width: 1120px;
+}
+.hero h1 span {
+  color: #43804e;
+}
+.hero-description {
+  font-size: 15px;
+  max-width: 690px;
+  line-height: 1.85;
+  margin-bottom: 28px;
+}
+.hero-note {
+  font-size: 11px;
+  color: #56694f;
+  margin-top: 18px;
+}
+.hero-product {
+  margin-top: 50px;
+}
+.product-label {
+  font-size: 9px;
+  color: #596e50;
+  margin-bottom: 13px;
+}
+.dashboard,
+.hero-product > img {
+  border-radius: 14px;
+  border-color: #cdddc6;
+  box-shadow:
+    0 28px 65px -22px #365d3730,
+    0 4px 15px #365d3707;
+}
+.browser-bar {
+  background: #f7faf4;
+}
+.dash-sidebar {
+  background: #f8fbf5;
+}
+.lead-card {
+  box-shadow: 0 3px 6px #36513205;
+}
+.floating-note {
+  border-color: #d9e5d2;
+  box-shadow: 0 14px 35px #24472b17;
+  border-radius: 12px;
+}
+.scroll-hint {
+  font-size: 11px;
+  margin-top: 34px;
+}
+.question-card,
+.feature-card,
+.industry-card,
+.plan-card {
+  transition:
+    transform 0.25s,
+    box-shadow 0.25s,
+    border-color 0.25s;
+}
+.question-card {
+  background: linear-gradient(145deg, #fff, #f8fbf5);
+  border-color: #dde7d7;
+}
+.question-card:hover,
+.feature-card:hover,
+.industry-card:hover {
+  transform: translateY(-4px);
+  border-color: #b9cfae;
+  box-shadow: 0 12px 30px #284d2e0b;
+}
+.question-card h3 {
+  font-size: 18px;
+  line-height: 1.45;
+}
+.question-number {
+  color: #607455;
+}
+.closing-question {
+  font-size: 15px;
+}
+.features-section {
+  background: #f6f9f3;
+  border-block: 1px solid #e8eee1;
+}
+.feature-card {
+  border-color: #e0e8d8;
+  box-shadow: 0 3px 10px #2b492b03;
+}
+.feature-primary {
+  background: linear-gradient(135deg, #e3efd9, #edf4e5);
+}
+.circle-icon {
+  border-radius: 14px;
+  background: #edf5e7;
+}
+.feature-primary .circle-icon {
+  background: #4b8551;
+}
+.feature-card h3 {
+  font-size: 18px;
+}
+.feature-card > p {
+  font-size: 13px;
+  line-height: 1.85;
+}
+.availability {
+  font-size: 10px;
+  color: #526747;
+}
+.mini-lead {
+  background: #ffffffb8;
+  box-shadow: 0 4px 10px #38562905;
+}
+.industry-card {
+  border-color: #dde6d5;
+}
+.industry-card h3 {
+  font-size: 24px;
+}
+.industry-card li {
+  font-size: 11px;
+}
+.process-grid h3 {
+  font-size: 23px;
+}
+.process-grid p {
+  font-size: 13px;
+  line-height: 1.85;
+}
+.proof-section {
+  background: linear-gradient(115deg, #214f35, #2e6543);
+}
+.proof-copy p {
+  font-size: 14px;
+  line-height: 1.9;
+}
+.plan-card {
+  border-color: #dbe5d1;
+  box-shadow: 0 4px 16px #36512b04;
+}
+.plan-card:hover {
+  border-color: #acc79b;
+  box-shadow: 0 14px 30px #36512b0b;
+}
+.plan-accent {
+  background: linear-gradient(145deg, #e8f1df, #f1f6e9);
+  border-color: #adc69c;
+  box-shadow: 0 8px 24px #36512b0b;
+}
+.plan-card > p {
+  font-size: 13px;
+}
+.plan-note {
+  font-size: 12px;
+}
+.plan-card .button {
+  font-size: 12px;
+}
+.booking-card {
+  background: linear-gradient(115deg, #f2f7ec, #e9f2df);
+  border-color: #d4e3c8;
+  box-shadow: 0 8px 25px #38542e05;
+}
+.booking-card p {
+  font-size: 13px;
+}
+.faq-item button {
+  font-size: 15px;
+}
+.faq-item p {
+  font-size: 13px;
+  line-height: 1.85;
+}
+.faq-layout .section-body {
+  font-size: 14px;
+}
+.final-section p {
+  font-size: 14px;
+  line-height: 1.85;
+}
+.footer-top p {
+  font-size: 12px;
+}
+.footer-bottom {
+  font-size: 11px;
+}
+.cookie-copy p {
+  font-size: 11px;
+}
+@media (min-width: 1600px) {
+  .hero {
+    padding-top: 90px;
+  }
+  .hero h1 {
+    font-size: 78px;
+  }
+  .hero-description {
+    font-size: 16px;
+  }
+  .hero-note {
+    font-size: 11px;
+  }
+}
+@media (max-width: 1190px) {
+  .desktop-nav a {
+    font-size: 11px;
+  }
+  .industry-card h3 {
+    font-size: 22px;
+  }
+  .industry-card li {
+    font-size: 10px;
+  }
+}
+@media (max-width: 960px) {
+  .hero {
+    padding-top: 58px;
+  }
+  .hero h1 {
+    font-size: 55px;
+    letter-spacing: -2.5px;
+  }
+  .hero-description {
+    font-size: 14px;
+  }
+  .hero-product {
+    margin-top: 40px;
+  }
+  .section-body {
+    font-size: 14px;
+  }
+  .process-grid h3 {
+    font-size: 20px;
+  }
+  .process-grid p {
+    font-size: 12px;
+  }
+  .plan-card > p {
+    font-size: 12px;
+  }
+  .plan-card .button {
+    font-size: 10px;
+  }
+  .faq-item button {
+    font-size: 14px;
+  }
+}
+@media (max-width: 640px) {
+  .hero {
+    padding-top: 43px;
+  }
+  .hero .eyebrow {
+    font-size: 8px;
+    letter-spacing: 1.4px;
+  }
+  .hero h1 {
+    font-size: clamp(35px, 9.4vw, 48px);
+    line-height: 1.12;
+    letter-spacing: -1.7px;
+    margin: 23px auto 20px;
+  }
+  .hero-description {
+    font-size: 13px;
+    line-height: 1.85;
+    margin-bottom: 24px;
+  }
+  .hero-note {
+    font-size: 9px;
+    line-height: 1.8;
+    margin-top: 16px;
+  }
+  .hero-product {
+    margin-top: 34px;
+  }
+  .product-label {
+    font-size: 6px;
+    margin-bottom: 9px;
+  }
+  .dashboard,
+  .hero-product > img {
+    border-radius: 9px;
+  }
+  .scroll-hint {
+    font-size: 10px;
+    margin-top: 29px;
+  }
+  .button {
+    font-size: 12px;
+    border-radius: 8px;
+    min-height: 49px;
+  }
+  .button.small {
+    font-size: 10px;
+    min-height: 42px;
+  }
+  .section-body,
+  .split-heading .section-body,
+  .center-heading .section-body {
+    font-size: 13px;
+    line-height: 1.85;
+  }
+  .question-card h3 {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .closing-question {
+    font-size: 13px;
+  }
+  .feature-card h3 {
+    font-size: 16px;
+  }
+  .feature-card > p {
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  .availability {
+    font-size: 9px;
+  }
+  .industry-card h3 {
+    font-size: 23px;
+  }
+  .industry-card li {
+    font-size: 9px;
+  }
+  .process-grid h3 {
+    font-size: 20px;
+  }
+  .process-grid p,
+  .proof-copy p {
+    font-size: 13px;
+  }
+  .plan-card > p,
+  .booking-card p,
+  .faq-item p,
+  .faq-layout .section-body,
+  .final-section p {
+    font-size: 13px;
+  }
+  .plan-note {
+    font-size: 12px;
+  }
+  .plan-card .button {
+    font-size: 12px;
+  }
+  .faq-item button {
+    font-size: 14px;
+  }
+  .footer-top p,
+  .footer-bottom {
+    font-size: 10px;
+  }
+  .cookie-copy p {
+    font-size: 11px;
+  }
+  .mobile-cta > .button {
+    font-size: 12px;
+  }
+}
+@media (max-width: 360px) {
+  .hero h1 {
+    font-size: 33px;
+  }
+  .hero .eyebrow {
+    font-size: 7px;
+  }
+  .question-card h3 {
+    font-size: 14px;
+  }
+  .industry-card li {
+    font-size: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .question-card:hover,
+  .feature-card:hover,
+  .industry-card:hover {
+    transform: none;
+  }
+}
+
+/* Direct calendar booking follows the landing page's existing visual language. */
+.calendar-saved {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--deep);
+  font-size: 12px;
+  margin-bottom: 18px;
+}
+.calendar-intro {
+  padding: 22px;
+  background: #f3f8ed;
+  border: 1px solid #dce7d3;
+  border-radius: 11px;
+  margin: 17px 0 24px;
+}
+.calendar-intro h3 {
+  font-size: 21px;
+  letter-spacing: -0.6px;
+  margin-bottom: 9px;
+}
+.calendar-intro p {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.calendar-date-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.calendar-date {
+  width: 100%;
+  min-height: 49px;
+  padding: 12px 14px;
+  border: 1px solid #b8cbb0;
+  border-radius: 8px;
+  color: var(--ink);
+  background: white;
+  font: inherit;
+  color-scheme: light;
+}
+.calendar-date:focus-visible {
+  outline: 3px solid var(--deep);
+  outline-offset: 3px;
+}
+.calendar-slots {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 22px 0;
+}
+.calendar-slot {
+  min-height: 46px;
+  border: 1px solid #c5d7bb;
+  color: var(--deep);
+  background: #fff;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+.calendar-slot:hover {
+  background: #eef5e7;
+  border-color: #779b66;
+}
+.calendar-slot[aria-pressed="true"] {
+  background: var(--deep);
+  color: #fff;
+  border-color: var(--deep);
+}
+.calendar-empty {
+  padding: 28px 18px;
+  margin-top: 18px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+  background: #f8faf5;
+  border: 1px dashed #d4dfcc;
+  border-radius: 9px;
+}
+.calendar-selection {
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  margin-top: 21px;
+}
+.calendar-selection > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--deep);
+}
+.calendar-setup {
+  min-height: 100svh;
+  background: #f4f8ef;
+  padding: 60px 24px;
+}
+.calendar-setup-card {
+  max-width: 740px;
+  margin: auto;
+  padding: 40px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px #31582b0a;
+}
+.calendar-setup-card > .text-button {
+  margin-bottom: 28px;
+}
+.calendar-setup h1 {
+  font-size: 38px;
+  line-height: 1.15;
+  letter-spacing: -1.5px;
+  margin: 20px 0;
+}
+.calendar-setup-card > p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+.calendar-setup form {
+  margin: 26px 0;
+  display: grid;
+  gap: 15px;
+}
+.calendar-setup .field {
+  display: grid;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.calendar-hosts {
+  display: grid;
+  gap: 14px;
+  margin: 24px 0;
+}
+.calendar-hosts article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #f9fbf6;
+}
+.calendar-hosts strong {
+  display: block;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.calendar-hosts span {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+.calendar-hosts .button {
+  font-size: 11px;
+  min-height: 44px;
+  padding: 11px 14px;
+}
+@media (max-width: 640px) {
+  .calendar-slots {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .calendar-slot {
+    font-size: 11px;
+  }
+  .calendar-date {
+    font-size: 16px;
+  }
+  .calendar-intro {
+    padding: 18px;
+  }
+  .calendar-intro h3 {
+    font-size: 20px;
+  }
+  .calendar-setup {
+    padding: 24px 16px;
+  }
+  .calendar-setup-card {
+    padding: 25px 20px;
+  }
+  .calendar-setup h1 {
+    font-size: 31px;
+  }
+  .calendar-hosts article {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 18px;
+    gap: 15px;
+  }
+  .calendar-hosts .button {
+    width: 100%;
+  }
+}
+@media (max-width: 360px) {
+  .calendar-slots {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

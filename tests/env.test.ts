@@ -2,6 +2,21 @@ import { describe, expect, it } from "vitest";
 import { parseEnv } from "../src/config/env";
 
 describe("environment configuration", () => {
+  it("uses direct Google Calendar with 30-minute demos by default", () => {
+    expect(parseEnv({})).toMatchObject({
+      SCHEDULING_PROVIDER: "google",
+      BOOKING_START_HOUR: 10.5,
+      BOOKING_DURATION_MINUTES: 30,
+    });
+    expect(() =>
+      parseEnv({
+        GOOGLE_CALENDAR_HOST_EMAILS: "one@example.test,one@example.test",
+      }),
+    ).toThrow("GOOGLE_CALENDAR_HOST_EMAILS");
+    expect(() =>
+      parseEnv({ BOOKING_START_HOUR: "18", BOOKING_END_HOUR: "10" }),
+    ).toThrow("BOOKING_END_HOUR");
+  });
   it("supports credential-free local scaffolding and empty optional settings", () => {
     expect(parseEnv({ NEXT_PUBLIC_GET_STARTED_URL: "" })).toMatchObject({
       APP_ENV: "development",

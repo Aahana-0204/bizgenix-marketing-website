@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: site.production ? "/" : undefined,
-      disallow: site.production ? ["/api/"] : "/",
+      disallow: site.production ? ["/api/", "/calendar/setup"] : "/",
     },
     ...(site.production ? { sitemap: `${site.url}/sitemap.xml` } : {}),
   };
