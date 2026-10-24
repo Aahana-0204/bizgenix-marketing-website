@@ -1,3 +1,3 @@
-# Brand assets
+# Official brand assets
 
-Place the approved BizGenix logo artwork here. The application currently uses a typographic brand treatment so it renders without missing images. Replace the brand treatment in Navbar and Hero with the approved assets when available.
+Place the approved, unchanged logo at `bizgenix-logo.svg`. Do not trace or redraw the supplied raster reference. The application automatically uses the SVG in the header, footer, favicon and Open Graph image; production build requires it. Until it is supplied, preview uses a text brand name and a generic initial favicon.

@@ -1,0 +1,9 @@
+packages:
+  - .
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - "@tailwindcss/oxide"
+  - "@prisma/engines"
+  - "@prisma/client"
+  - prisma

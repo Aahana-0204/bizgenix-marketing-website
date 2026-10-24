@@ -1,8 +1,124 @@
-import Link from "next/link";
-import { ArrowUpRight, ChartNoAxesCombined, MessagesSquare, Workflow, AudioLines, Bot, Layers, Check, MoveUpRight } from "lucide-react";
+import { Action, ActionProvider } from "@/components/actions/Actions";
 import { Hero } from "@/components/sections/Hero";
-import { PromoCarousel } from "@/components/sections/PromoCarousel";
-import { Stats } from "@/components/sections/Stats";
+import { Problem } from "@/components/sections/Problem";
+import { Features } from "@/components/sections/Features";
+import { Industries } from "@/components/sections/Industries";
+import { HowItWorks } from "@/components/sections/HowItWorks";
+import { Proof } from "@/components/sections/Proof";
+import { Plans } from "@/components/sections/Plans";
+import { Booking } from "@/components/sections/Booking";
+import { FaqSection } from "@/components/sections/FaqSection";
+import { FinalCta } from "@/components/sections/FinalCta";
+
+import { landing } from "@/content/landing";
+import { site } from "@/config/site";
+import { Navigation } from "@/components/Navigation";
+
+import { Icon } from "@/components/ui/Icon";
+import { Brand } from "@/components/Brand";
+import { Tracking } from "@/components/Tracking";
+
 export default function Home() {
-  return <main id="main-content"><Hero /><PromoCarousel /><section className="ecosystem container"><p className="eyebrow">BUILT FOR THE PLACES AMBITION HAPPENS</p><div className="marquee"><div>{[0, 1].map(copy => <div key={copy} aria-hidden={copy === 1}>{["STARTUP ECOSYSTEMS", "LEARNING COMMUNITIES", "GROWING BUSINESSES", "INNOVATION HUBS"].map((name, i) => <span key={name}><span className="institution-mark">{["◈", "✳", "▦", "◎"][i]}</span>{name}</span>)}</div>)}</div></div><p className="fine-print">Connecting ideas, teams, and practical technology.</p></section><section className="section section-mint" id="improve"><div className="container"><div className="section-heading"><p className="eyebrow">START WITH WHAT MATTERS TO YOU</p><h2>What would you<br />like to <span>improve?</span></h2><p>Every business has its bottlenecks. Let’s make yours a little smaller.</p></div><div className="cards-three">{[{ Icon: ChartNoAxesCombined, title: "Grow without the guesswork.", text: "Connect the dots between your leads, conversations, and next big opportunity.", link: "Find your growth engine", href: "/product#growth-intelligence" }, { Icon: MessagesSquare, title: "Make every customer feel heard.", text: "Keep conversations moving, questions answered, and good relationships growing.", link: "Get closer to customers", href: "/product#bizchat" }, { Icon: Workflow, title: "Give your team their time back.", text: "Take repeat tasks off the daily to-do list. Put your people where they make a difference.", link: "Simplify the everyday", href: "/custom-solution" }].map(({ Icon, title, text, link, href }, i) => <article className="card improve-card" key={title}><div className="card-top"><span className="icon-tile"><Icon size={26} /></span><span className="card-number">0{i + 1}</span></div><h3>{title}</h3><p>{text}</p><Link className="text-link" href={href}>{link}<ArrowUpRight size={18} /></Link></article>)}</div></div></section><section className="section" id="products"><div className="container"><div className="section-heading heading-row"><div><p className="eyebrow">SMART TOOLS. REAL-WORLD WORK.</p><h2>Meet your new<br /><span>unfair advantage.</span></h2></div><div><p>A connected toolkit for the way<br />your business actually runs.</p><Link href="/product" className="text-link">Explore all products <ArrowUpRight size={18} /></Link></div></div><div className="product-grid"><Link href="/product#growth-intelligence" className="product-feature"><div className="product-title"><span className="product-icon"><ChartNoAxesCombined /></span><span>Growth Intelligence<small>FROM INFORMATION TO YOUR NEXT MOVE</small></span><ArrowUpRight /></div><div className="growth-art" aria-label="Illustrative growth dashboard"><div className="art-label">YOUR NEXT OPPORTUNITY <span>↗</span></div><strong>See the bigger picture.</strong><div className="chart-bars">{[25, 40, 33, 58, 46, 70, 61, 88, 79, 100].map((height, i) => <span key={i} style={{ height: `${height}%` }} />)}</div><div className="chart-caption"><span>Clarity in every signal</span><span><Check size={12} /> Connected</span></div></div><p>Turn scattered signals into a clearer path to growth.</p></Link><div className="product-stack">{[{ Icon: Layers, title: "CRM", text: "More relationships. Fewer loose ends.", slug: "crm" }, { Icon: Workflow, title: "ScaleOS", text: "Bring your people and processes together.", slug: "scaleos" }, { Icon: AudioLines, title: "Voice AI", text: "A helpful voice. Whenever it’s needed.", slug: "voice-ai" }, { Icon: Bot, title: "BizChat", text: "Keep the conversation going.", slug: "bizchat" }].map(({ Icon, title, text, slug }) => <Link className="product-row" href={`/product#${slug}`} key={title}><span className="icon-tile"><Icon /></span><div><h3>{title}</h3><p>{text}</p></div><ArrowUpRight size={21} /></Link>)}</div></div></div></section><Stats /><section className="section"><div className="container"><div className="section-heading heading-row"><div><p className="eyebrow">IDEAS WORTH MAKING TIME FOR</p><h2>A little insight.<br /><span>A lot of possibility.</span></h2></div><Link href="/insights" className="text-link">Explore insights <ArrowUpRight size={18} /></Link></div><div className="cards-three">{[{ category: "SOLUTION EXAMPLE", title: "What happens when the follow-up follows itself?", text: "Explore a lead-to-conversation workflow for a growing team.", href: "/case-study", art: "flow", Icon: Workflow }, { category: "PRACTICAL AI", title: "Your first automation doesn’t need to be your biggest.", text: "A simple framework for choosing where to start.", href: "/insights", art: "idea", Icon: Bot }, { category: "THE LEARNING HUB", title: "Get comfortable with what AI can do for you.", text: "Clear explanations. Useful questions. No jargon required.", href: "/learning", art: "learn", Icon: Layers }].map(({ category, title, text, href, art, Icon }) => <Link className="editorial-card" key={title} href={href}><div className={`editorial-art ${art}`}><div className="art-orbit" /><Icon size={58} strokeWidth={1.2} /><span className="article-arrow"><MoveUpRight size={20} /></span></div><p className="eyebrow">{category}</p><h3>{title}</h3><p>{text}</p></Link>)}</div></div></section></main>;
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "Bizgenix AI",
+      url: site.url,
+      ...(site.logo ? { logo: `${site.url}/brand/bizgenix-logo.svg` } : {}),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: landing.brand,
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      description: landing.hero.body,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: landing.faqs.map(([name, text]) => ({
+        "@type": "Question",
+        name,
+        acceptedAnswer: { "@type": "Answer", text },
+      })),
+    },
+  ];
+  return (
+    <ActionProvider config={site}>
+      <Tracking gtmId={site.gtmId} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, "\u003c"),
+        }}
+      />
+      <a href="#main" className="skip-link">
+        Skip to content
+      </a>
+      <Navigation logo={site.logo} />
+      <main id="main">
+        <Hero />
+        <Problem />
+        <Features />
+        <Industries />
+        <HowItWorks />
+        <Proof />
+        <Plans />
+        <Booking />
+        <FaqSection />
+        <FinalCta />
+      </main>
+      <footer className="site-footer">
+        <div className="container">
+          <div className="footer-top">
+            <Brand logo={site.logo} />
+            <p>Clarity for your next chapter.</p>
+            <a href="#top" className="back-top">
+              Back to top
+              <Icon name="arrow" size={17} />
+            </a>
+          </div>
+          <div className="footer-bottom">
+            <span>© {new Date().getFullYear()} Bizgenix AI</span>
+            <div>
+              {site.contactEmail && (
+                <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>
+              )}
+              {site.contactPhone && (
+                <a href={`tel:${site.contactPhone.replace(/[^+0-9]/g, "")}`}>
+                  {site.contactPhone}
+                </a>
+              )}
+              {site.privacyUrl && <a href={site.privacyUrl}>Privacy Policy</a>}
+              {site.termsUrl && <a href={site.termsUrl}>Terms</a>}
+            </div>
+          </div>
+          {!site.production &&
+            (!site.contactEmail ||
+              !site.privacyUrl ||
+              !site.termsUrl ||
+              !site.logo) && (
+              <p className="dev-note">
+                Preview TODO:{" "}
+                {(!site.logo ? "official SVG · " : "") +
+                  (!site.contactEmail ? "contact details · " : "") +
+                  (!site.privacyUrl ? "Privacy URL · " : "") +
+                  (!site.termsUrl ? "Terms URL" : "")}
+              </p>
+            )}
+        </div>
+      </footer>
+      <div className="mobile-cta">
+        <Action className="button">
+          Book Free Demo
+          <Icon name="arrow" size={18} />
+        </Action>
+        <Action kind="start" className="mobile-start">
+          Get Started
+        </Action>
+      </div>
+    </ActionProvider>
+  );
 }

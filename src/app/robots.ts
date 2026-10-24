@@ -1,2 +1,12 @@
 import type { MetadataRoute } from "next";
-export default function robots(): MetadataRoute.Robots { return { rules: { userAgent: "*", allow: "/", disallow: "/api/" }, sitemap: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/sitemap.xml` }; }
+import { site } from "@/config/site";
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: {
+      userAgent: "*",
+      allow: site.production ? "/" : undefined,
+      disallow: site.production ? ["/api/"] : "/",
+    },
+    ...(site.production ? { sitemap: `${site.url}/sitemap.xml` } : {}),
+  };
+}

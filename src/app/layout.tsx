@@ -1,35 +1,48 @@
 import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
-import { BookingProvider } from "@/features/booking/BookingProvider";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/sections/Footer";
+import Script from "next/script";
+import localFont from "next/font/local";
+import { site } from "@/config/site";
 import "./globals.css";
-
-const geistSans = Inter({
-  variable: "--font-body",
-  subsets: ["latin"],
+const inter = localFont({
+  src: "./fonts/InterVariable.woff2",
+  display: "swap",
+  variable: "--font-inter",
+  weight: "100 900",
 });
-
-const geistMono = Plus_Jakarta_Sans({
-  variable: "--font-heading",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
-  title: { default: "BizGenix AI Solutions | AI That Takes Work Off Your Desk.", template: "%s | BizGenix AI Solutions" },
-  description: "Practical AI solutions for growing businesses. Explore Growth Intelligence, CRM, ScaleOS, Voice AI, and BizChat, or book a free business review.",
-  openGraph: { title: "BizGenix AI Solutions", description: "AI That Takes Work Off Your Desk.", type: "website", locale: "en_IN", siteName: "BizGenix AI Solutions" },
-  twitter: { card: "summary_large_image" },
+  metadataBase: new URL(site.url),
+  title: "Bizgenix AI CRM | Leads, Pipeline & Better Follow-Through",
+  description:
+    "Bring customer enquiries, sales activities and follow-ups into one organized workspace. Explore Bizgenix AI CRM with a free live demo.",
+  alternates: { canonical: "/" },
+  robots: { index: site.production, follow: site.production },
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    siteName: "Bizgenix AI CRM",
+    title: "Leads Are Coming In. Are They Moving Forward?",
+    description:
+      "One organized workspace for your leads, pipeline and follow-ups.",
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Bizgenix AI CRM",
+    description: "Your next sales opportunity deserves a clear next step.",
+  },
 };
-
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body><a className="skip-link" href="#main-content">Skip to content</a><BookingProvider><Navbar />{children}<Footer /></BookingProvider><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "Organization", name: "BizGenix AI Solutions", url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000", slogan: "AI That Takes Work Off Your Desk." }).replace(/</g, "\\u003c") }} /></body>
+    <html lang="en-IN" className={inter.variable}>
+      <body>
+        <Script
+          id="consent-default"
+          strategy="beforeInteractive"
+        >{`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{ad_storage:'denied',analytics_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});try{if(localStorage.getItem('bizgenix-consent-v1')==='accepted')gtag('consent','update',{ad_storage:'granted',analytics_storage:'granted',ad_user_data:'granted',ad_personalization:'granted'});}catch(e){}`}</Script>
+        {children}
+      </body>
     </html>
   );
 }
