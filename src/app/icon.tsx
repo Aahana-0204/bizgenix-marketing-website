@@ -1,36 +1,19 @@
-/* ImageResponse renders raw image nodes; next/image cannot run in this renderer. */
-/* eslint-disable @next/next/no-img-element */
 import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { site } from "@/config/site";
 export const size = { width: 64, height: 64 };
 export const contentType = "image/png";
 export default async function Icon() {
-  if (site.logo) {
-    const svg = await readFile(
-      join(process.cwd(), "public/brand/bizgenix-logo.svg"),
-    );
-    return new ImageResponse(
-      <div
-        style={{
-          display: "flex",
-          width: 64,
-          height: 64,
-          background: "white",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <img
-          src={`data:image/svg+xml;base64,${svg.toString("base64")}`}
-          width={60}
-          height={60}
-          alt=""
-        />
-      </div>,
-      size,
-    );
+  const iconPath = join(process.cwd(), "public/brand/bizgenix-icon.png");
+  if (existsSync(iconPath)) {
+    const iconData = await readFile(iconPath);
+    return new Response(iconData, {
+      headers: {
+        "Content-Type": "image/png",
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
+    });
   }
   return new ImageResponse(
     <div

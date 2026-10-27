@@ -5,10 +5,12 @@ import { parseEnv } from "./src/config/env";
 const env = parseEnv(process.env);
 if (
   env.APP_ENV === "production" &&
-  !existsSync("public/brand/bizgenix-logo.svg")
+  !existsSync("public/brand/bizgenix-logo.svg") &&
+  !existsSync("public/brand/bizgenix-logo.png") &&
+  !existsSync("public/brand/bizgenix-logo.jpg")
 )
   throw new Error(
-    "Add the approved official SVG at public/brand/bizgenix-logo.svg before production",
+    "Add the approved logo at public/brand/bizgenix-logo.svg, .png or .jpg before production",
   );
 const csp = [
   "default-src 'self'",

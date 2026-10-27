@@ -25,7 +25,11 @@ export default function Home() {
       "@type": "Organization",
       name: "Bizgenix AI",
       url: site.url,
-      ...(site.logo ? { logo: `${site.url}/brand/bizgenix-logo.svg` } : {}),
+      ...(site.logo
+        ? {
+            logo: `${site.url}/brand/bizgenix-logo.${site.logoFormat || "svg"}`,
+          }
+        : {}),
     },
     {
       "@context": "https://schema.org",
@@ -57,7 +61,7 @@ export default function Home() {
       <a href="#main" className="skip-link">
         Skip to content
       </a>
-      <Navigation logo={site.logo} />
+      <Navigation logo={site.logo} logoFormat={site.logoFormat} />
       <main id="main">
         <Hero />
         <Problem />
@@ -73,7 +77,7 @@ export default function Home() {
       <footer className="site-footer">
         <div className="container">
           <div className="footer-top">
-            <Brand logo={site.logo} />
+            <Brand logo={site.logo} logoFormat={site.logoFormat} />
             <p>Clarity for your next chapter.</p>
             <a href="#top" className="back-top">
               Back to top

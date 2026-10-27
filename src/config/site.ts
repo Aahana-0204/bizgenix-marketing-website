@@ -24,7 +24,17 @@ export const site = {
     weekdays: env.BOOKING_WEEKDAYS.split(",").map(Number),
   },
   gtmId: env.NEXT_PUBLIC_GTM_ID,
-  logo: existsSync(join(process.cwd(), "public/brand/bizgenix-logo.svg")),
+  logo:
+    existsSync(join(process.cwd(), "public/brand/bizgenix-logo.svg")) ||
+    existsSync(join(process.cwd(), "public/brand/bizgenix-logo.png")) ||
+    existsSync(join(process.cwd(), "public/brand/bizgenix-logo.jpg")),
+  logoFormat: existsSync(join(process.cwd(), "public/brand/bizgenix-logo.svg"))
+    ? ("svg" as const)
+    : existsSync(join(process.cwd(), "public/brand/bizgenix-logo.png"))
+      ? ("png" as const)
+      : existsSync(join(process.cwd(), "public/brand/bizgenix-logo.jpg"))
+        ? ("jpg" as const)
+        : null,
   dashboard: existsSync(join(process.cwd(), "public/product/dashboard.webp")),
   preview: !env.DATABASE_URL,
 };

@@ -9,7 +9,11 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export default async function Image() {
   const logo = site.logo
-    ? `data:image/svg+xml;base64,${(await readFile(join(process.cwd(), "public/brand/bizgenix-logo.svg"))).toString("base64")}`
+    ? site.logoFormat === "svg"
+      ? `data:image/svg+xml;base64,${(await readFile(join(process.cwd(), "public/brand/bizgenix-logo.svg"))).toString("base64")}`
+      : site.logoFormat === "png"
+        ? `data:image/png;base64,${(await readFile(join(process.cwd(), "public/brand/bizgenix-logo.png"))).toString("base64")}`
+        : `data:image/jpeg;base64,${(await readFile(join(process.cwd(), "public/brand/bizgenix-logo.jpg"))).toString("base64")}`
     : null;
   return new ImageResponse(
     <div

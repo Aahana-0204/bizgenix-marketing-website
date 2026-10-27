@@ -5,12 +5,18 @@ import { landing } from "@/content/landing";
 import { Brand } from "./Brand";
 import { Action } from "./actions/Actions";
 import { Icon } from "./ui/Icon";
-export function Navigation({ logo }: { logo: boolean }) {
+export function Navigation({
+  logo,
+  logoFormat,
+}: {
+  logo: boolean;
+  logoFormat?: "svg" | "png" | "jpg" | null;
+}) {
   const [open, setOpen] = useState(false);
   return (
     <header className="site-header">
       <div className="nav-inner">
-        <Brand logo={logo} />
+        <Brand logo={logo} logoFormat={logoFormat} />
         <nav className="desktop-nav" aria-label="Main navigation">
           {landing.nav.map(([title, id]) => (
             <a href={`#${id}`} key={id}>
