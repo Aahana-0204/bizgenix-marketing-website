@@ -59,9 +59,22 @@ test("demo validation, API acceptance and no invented booking", async ({
   await page.getByRole("button", { name: "Close enquiry" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });
-test("plan enquiry and Get Started fallback do not force calendar", async ({
-  page,
-}) => {
+test("Get Started redirects to CRM registration", async ({ page }) => {
+  await page.goto("/");
+  await page.route("https://crm.bizgenix.ai/register**", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "text/html",
+      body: "Registered",
+    }),
+  );
+  await page
+    .getByRole("button", { name: "Get Started", exact: true })
+    .first()
+    .click();
+  await expect(page).toHaveURL(/^https:\/\/crm\.bizgenix\.ai\/register/);
+});
+test("plan enquiries still open the enquiry form", async ({ page }) => {
   await page.goto("/");
   await rejectCookies(page);
   await page
@@ -76,13 +89,6 @@ test("plan enquiry and Get Started fallback do not force calendar", async ({
   await page.getByRole("button", { name: "Send my enquiry" }).click();
   await expect(page.getByText("Your preview enquiry was saved.")).toBeVisible();
   await page.getByRole("button", { name: "Close enquiry" }).click();
-  await page
-    .getByRole("button", { name: "Get Started", exact: true })
-    .first()
-    .click();
-  await expect(
-    page.getByRole("heading", { name: "Find the right fit for your team." }),
-  ).toBeVisible();
 });
 test("network failure keeps entered details and offers retry", async ({
   page,
@@ -106,7 +112,7 @@ test("consent and once-only tracking contain no PII", async ({ page }) => {
   await page.goto("/?utm_source=qa&utm_campaign=browser");
   await page.getByRole("button", { name: "Accept", exact: true }).click();
   await page
-    .getByRole("button", { name: "Get Started", exact: true })
+    .getByRole("button", { name: "Book Free Demo", exact: true })
     .first()
     .click();
   await fillBase(page);

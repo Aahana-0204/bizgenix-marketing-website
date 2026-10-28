@@ -5,7 +5,8 @@ import { env } from "./server";
 export const site = {
   url: env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
   production: env.APP_ENV === "production",
-  getStartedUrl: env.NEXT_PUBLIC_GET_STARTED_URL,
+  getStartedUrl:
+    env.NEXT_PUBLIC_GET_STARTED_URL || "https://crm.bizgenix.ai/register",
   privacyUrl: env.NEXT_PUBLIC_PRIVACY_URL,
   termsUrl: env.NEXT_PUBLIC_TERMS_URL,
   contactEmail: env.NEXT_PUBLIC_CONTACT_EMAIL,
