@@ -2,6 +2,7 @@ import { ZodError } from "zod";
 import { AppError } from "@/application/CreateOrUpdateLead";
 import { reportFailure } from "./logger";
 import { env } from "@/config/server";
+import { isAllowedOrigin } from "./origin";
 export function json(data: unknown, status = 200) {
   return Response.json(data, {
     status,
@@ -17,9 +18,7 @@ export async function readJson(request: Request) {
     "application/json"
   )
     throw new AppError(415, "Please send JSON.");
-  const origin = request.headers.get("origin");
-  const allowed = new URL(env.NEXT_PUBLIC_SITE_URL || request.url).origin;
-  if (!origin || origin !== allowed)
+  if (!isAllowedOrigin(request, env.NEXT_PUBLIC_SITE_URL))
     throw new AppError(403, "This request origin is not allowed.");
   const body = await readBody(request, 16000);
   try {

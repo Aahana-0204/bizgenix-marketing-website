@@ -198,19 +198,19 @@ export const formContent = {
   ],
   teamSizes: ["1–5", "6–10", "11–25", "26+"],
   plans: ["5 Users", "10 Users", "Unlimited Users", "Not sure yet"],
-  bookingTitle: "Let’s move your sales forward.",
+  bookingTitle: "Choose a time that works for you.",
   planTitle: "Find the right fit for your team.",
   bookingSubtitle:
-    "A free live walkthrough. Your business. A practical path forward.",
+    "See live availability for Khushi and Pranesh. Pick a time first, then share a few details to confirm your walkthrough.",
   planSubtitle:
     "Tell us a little about your team. We’ll share the approved plan details.",
   consent:
     "I agree to be contacted about my enquiry and have read the Privacy Policy.",
   helper:
-    "We’ll use your details to arrange your review and send a confirmation.",
+    "We’ll use these details to confirm your meeting and send the calendar invitation.",
   placeholder: "Tell us where work gets in the way.",
   planSuccess:
     "Thanks — our team will share the approved plan details shortly.",
-  submitDemo: "Get your slot booked",
+  submitDemo: "Confirm your booking",
   submitPlan: "Send my enquiry",
 } as const;

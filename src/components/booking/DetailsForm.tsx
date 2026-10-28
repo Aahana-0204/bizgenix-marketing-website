@@ -17,11 +17,13 @@ export default function DetailsForm({
   kind,
   plan,
   config,
+  submitLabel,
   onSuccess,
 }: {
   kind: "demo" | "plan";
   plan?: string;
   config: PublicSite;
+  submitLabel?: string;
   onSuccess: (result: LeadResult, data: ValidLead) => void;
 }) {
   const [failure, setFailure] = useState("");
@@ -44,7 +46,6 @@ export default function DetailsForm({
     },
   });
   async function submit(data: ValidLead) {
-    if (isSubmitting) return;
     setFailure("");
     try {
       const response = await fetch("/api/leads", {
@@ -157,36 +158,32 @@ export default function DetailsForm({
         {text("full_name")}
         {text("work_email")}
         {text("mobile")}
-        {kind === "demo" ? (
-          <>
-            {select("interested_in", copy.interests, true)}
-            {select("industry", copy.industries)}
-            {select("team_size", copy.teamSizes)}
-          </>
-        ) : (
+        {kind === "plan" && (
           <>
             {select("plan_interest", copy.plans)}
             {select("team_size", copy.teamSizes)}
           </>
         )}
-        <div className="field wide">
-          <label htmlFor="key_challenge">{copy.key_challenge}</label>
-          <textarea
-            id="key_challenge"
-            {...register("key_challenge")}
-            placeholder={copy.placeholder}
-            maxLength={2000}
-            aria-invalid={Boolean(error("key_challenge"))}
-            aria-describedby={
-              error("key_challenge") ? "key_challenge-error" : undefined
-            }
-          />
-          {error("key_challenge") && (
-            <p className="field-error" id="key_challenge-error">
-              {error("key_challenge")}
-            </p>
-          )}
-        </div>
+        {kind === "plan" && (
+          <div className="field wide">
+            <label htmlFor="key_challenge">{copy.key_challenge}</label>
+            <textarea
+              id="key_challenge"
+              {...register("key_challenge")}
+              placeholder={copy.placeholder}
+              maxLength={2000}
+              aria-invalid={Boolean(error("key_challenge"))}
+              aria-describedby={
+                error("key_challenge") ? "key_challenge-error" : undefined
+              }
+            />
+            {error("key_challenge") && (
+              <p className="field-error" id="key_challenge-error">
+                {error("key_challenge")}
+              </p>
+            )}
+          </div>
+        )}
       </div>
       <div className="honeypot" aria-hidden="true">
         <label htmlFor="website">Website (leave empty)</label>
@@ -236,10 +233,11 @@ export default function DetailsForm({
         type="submit"
       >
         {isSubmitting
-          ? "Saving your details…"
-          : kind === "demo"
-            ? copy.submitDemo
-            : copy.submitPlan}
+          ? kind === "demo"
+            ? "Confirming your booking…"
+            : "Saving your enquiry…"
+          : submitLabel ||
+            (kind === "demo" ? copy.submitDemo : copy.submitPlan)}
         <Icon name="arrow" size={17} />
       </button>
     </form>

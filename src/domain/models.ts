@@ -65,6 +65,9 @@ export interface CrmGateway {
 export interface RateLimiter {
   allow(ip: string, email: string): Promise<boolean>;
 }
+export interface AvailabilityRateLimiter {
+  allowAvailability(ip: string): Promise<boolean>;
+}
 export interface Delivery {
   send(job: Job): Promise<void>;
 }

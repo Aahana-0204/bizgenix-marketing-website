@@ -9,7 +9,11 @@ export const maxDuration = 60;
 export async function POST(request: Request) {
   return handle(async () => {
     const input = z
-      .object({ leadId: z.string().min(1).max(100), startAt: z.iso.datetime() })
+      .object({
+        leadId: z.string().min(1).max(100),
+        startAt: z.iso.datetime(),
+        presenter: z.email(),
+      })
       .parse(await readJson(request));
     const { services, attempt } = await authorizeScheduling(
       request,
@@ -19,6 +23,7 @@ export async function POST(request: Request) {
       input.leadId,
       attempt,
       input.startAt,
+      input.presenter,
     );
     after(async () => {
       try {

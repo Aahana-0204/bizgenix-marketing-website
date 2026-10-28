@@ -3292,6 +3292,201 @@ h2 {
   border-radius: 11px;
   margin: 17px 0 24px;
 }
+.calendar-booking-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  gap: 20px;
+  margin-top: 21px;
+}
+.calendar-month,
+.calendar-times {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+}
+.calendar-month-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  font-size: 15px;
+}
+.calendar-month-heading > div {
+  display: flex;
+  gap: 6px;
+}
+.calendar-month-nav {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--deep);
+}
+.calendar-month-nav:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.calendar-month-nav:not(:disabled):hover {
+  background: #f3f8ed;
+}
+.calendar-month-nav.next svg {
+  transform: rotate(0deg);
+}
+.calendar-month-nav:not(.next) svg {
+  transform: rotate(180deg);
+}
+.calendar-weekdays,
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+.calendar-weekdays {
+  margin-bottom: 8px;
+  color: var(--muted);
+  text-align: center;
+  font-size: 10px;
+  font-weight: 600;
+}
+.calendar-days {
+  row-gap: 6px;
+}
+.calendar-day {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: var(--deep);
+  background: #f3f8ed;
+  font-size: 12px;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    transform 0.15s;
+}
+.calendar-day:not(:disabled):hover {
+  background: #e4eedc;
+  transform: scale(1.05);
+}
+.calendar-day[aria-pressed="true"] {
+  background: var(--deep);
+  color: #fff;
+  font-weight: 700;
+}
+.calendar-day:disabled {
+  background: transparent;
+  color: #a4aca0;
+  cursor: not-allowed;
+}
+.calendar-day:focus-visible,
+.calendar-month-nav:focus-visible {
+  outline: 3px solid var(--deep);
+  outline-offset: 2px;
+}
+.calendar-timezone {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 17px;
+  padding-top: 13px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 10px;
+}
+.calendar-times h4 {
+  min-height: 34px;
+  margin-bottom: 13px;
+  font-size: 13px;
+}
+.calendar-times .calendar-slots {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  max-height: 330px;
+  margin: 0;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+.calendar-times .calendar-slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 43px;
+  padding: 8px 11px;
+  border-color: #d7e3d0;
+  text-align: left;
+}
+.calendar-times .calendar-slot strong {
+  font-size: 12px;
+}
+.calendar-times .calendar-slot span {
+  color: var(--muted);
+  font-size: 10px;
+}
+.calendar-times .calendar-slot[aria-pressed="true"] span {
+  color: #fff;
+}
+.calendar-selection-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 18px 0;
+  padding: 14px 16px;
+  border: 1px solid #dce7d3;
+  border-radius: 12px;
+  background: #f7faf4;
+}
+.calendar-selection-summary > span {
+  display: grid;
+  gap: 4px;
+}
+.calendar-selection-summary strong {
+  color: var(--deep);
+  font-size: 12px;
+}
+.calendar-selection-summary span span {
+  color: var(--muted);
+  font-size: 11px;
+}
+.calendar-details .form-grid {
+  gap: 15px;
+}
+.calendar-details .form-helper {
+  margin-top: 15px;
+}
+.calendar-retry {
+  display: grid;
+  gap: 15px;
+}
+.calendar-retry p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.calendar-retry .button {
+  width: 100%;
+}
+.calendar-intro h3 {
+  font-size: 21px;
+  letter-spacing: -0.6px;
+  margin-bottom: 9px;
+}
+.calendar-intro p {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--muted);
+}
 .calendar-intro h3 {
   font-size: 21px;
   letter-spacing: -0.6px;
@@ -3447,6 +3642,17 @@ h2 {
   padding: 11px 14px;
 }
 @media (max-width: 640px) {
+  .calendar-booking-layout {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .calendar-month,
+  .calendar-times {
+    padding: 15px;
+  }
+  .calendar-times .calendar-slots {
+    max-height: 240px;
+  }
   .calendar-slots {
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;

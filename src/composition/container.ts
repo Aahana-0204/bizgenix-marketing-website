@@ -40,6 +40,7 @@ function makeContainer() {
     leads,
     bookings,
     jobs,
+    availabilityLimiter: limiter,
     createLead: new CreateOrUpdateLead(leads, limiter),
     outbox: new ProcessOutbox(jobs, delivery, (id) =>
       reportFailure("OUTBOX_EXHAUSTED", id),

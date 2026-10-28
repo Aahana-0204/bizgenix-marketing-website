@@ -27,6 +27,7 @@ export type ConfirmedBooking = {
   status: string;
   startAt: string;
   timezone: string;
+  presenter?: string;
   meetingUrl?: string;
   uid: string;
 };
@@ -44,7 +45,12 @@ export default function BookingModal({
     data: ValidLead;
   } | null>(null);
   const [booking, setBooking] = useState<ConfirmedBooking | null>(null);
-  const step = booking ? 3 : lead ? 2 : 1;
+  const [step, setStep] = useState(1);
+  const googleBooking =
+    kind === "demo" && config.schedulingProvider === "google";
+  const stepLabels = googleBooking
+    ? ["Choose a time", "Your details", "You’re booked"]
+    : ["Your details", "Pick a time", "You’re booked"];
   return (
     <>
       <div className="eyebrow modal-eyebrow">
@@ -58,7 +64,7 @@ export default function BookingModal({
       </Dialog.Description>
       {kind === "demo" && (
         <ol className="stepper" aria-label="Booking progress">
-          {["Your details", "Pick a time", "You’re booked"].map((label, i) => (
+          {stepLabels.map((label, i) => (
             <li
               key={label}
               className={step === i + 1 ? "active" : ""}
@@ -69,43 +75,18 @@ export default function BookingModal({
           ))}
         </ol>
       )}
-      {!lead ? (
-        <DetailsForm
-          kind={kind}
-          plan={plan}
-          config={config}
-          onSuccess={(result, data) => setLead({ result, data })}
-        />
-      ) : kind === "plan" ? (
-        <div className="success-panel" role="status">
-          <div className="success-icon">
-            <Icon name="success" size={34} />
-          </div>
-          <h3>
-            {lead.result.preview
-              ? "Your preview enquiry was saved."
-              : copy.planSuccess}
-          </h3>
-          <p>
-            {lead.result.preview
-              ? "This is a local preview. No email or CRM notification was sent."
-              : "We’ll review your requirements and get in touch using the details you shared."}
-          </p>
-          <Dialog.Close className="button secondary">
-            Back to exploring
-            <Icon name="right" size={17} />
-          </Dialog.Close>
-        </div>
-      ) : booking ? (
+      {booking ? (
         <div className="success-panel" role="status">
           <div className="success-icon">
             <Icon name="success" size={34} />
           </div>
           <h3>You’re booked.</h3>
           <p>
-            {config.schedulingProvider === "google"
-              ? "Your appointment is confirmed. Google Calendar sends an invitation to your email. Contact the organizer through the invitation if you need to change your time."
-              : "Your booking is confirmed. Cal.com sends the confirmation and cancellation or rescheduling details to your email."}
+            {booking.presenter
+              ? `Your meeting with ${hostName(booking.presenter)} is confirmed. Google Calendar sends an invitation to your email.`
+              : config.schedulingProvider === "google"
+                ? "Your appointment is confirmed. Google Calendar sends an invitation to your email. Contact the organizer through the invitation if you need to change your time."
+                : "Your booking is confirmed. Cal.com sends the confirmation and cancellation or rescheduling details to your email."}
           </p>
           <div className="meeting-detail">
             {new Intl.DateTimeFormat("en-IN", {
@@ -128,21 +109,57 @@ export default function BookingModal({
             </a>
           )}
         </div>
-      ) : config.schedulingProvider === "google" ? (
-        <>
-          <p className="calendar-saved">
-            <Icon name="check" size={15} />
-            Your details are saved.
+      ) : googleBooking ? (
+        <GoogleCalendarSlots
+          config={config}
+          onConfirmed={(confirmed) => {
+            setStep(3);
+            setBooking(confirmed);
+          }}
+          onStepChange={setStep}
+        />
+      ) : !lead ? (
+        <DetailsForm
+          kind={kind}
+          plan={plan}
+          config={config}
+          onSuccess={(result, data) => {
+            setStep(2);
+            setLead({ result, data });
+          }}
+        />
+      ) : kind === "plan" ? (
+        <div className="success-panel" role="status">
+          <div className="success-icon">
+            <Icon name="success" size={34} />
+          </div>
+          <h3>
+            {lead.result.preview
+              ? "Your preview enquiry was saved."
+              : copy.planSuccess}
+          </h3>
+          <p>
+            {lead.result.preview
+              ? "This is a local preview. No email or CRM notification was sent."
+              : "We’ll review your requirements and get in touch using the details you shared."}
           </p>
-          <GoogleCalendarSlots
-            config={config}
-            lead={lead.result}
-            onConfirmed={setBooking}
-          />
-        </>
+          <Dialog.Close className="button secondary">
+            Back to exploring
+            <Icon name="right" size={17} />
+          </Dialog.Close>
+        </div>
+      ) : config.schedulingProvider === "google" ? (
+        <p className="calendar-empty" role="status">
+          Choose a time to see available appointments.
+        </p>
       ) : (
         <CalEmbed config={config} lead={lead} onConfirmed={setBooking} />
       )}
     </>
   );
+}
+
+function hostName(email: string) {
+  const name = email.split("@")[0].replace(/[._-]+/g, " ");
+  return name.replace(/\b\w/g, (letter) => letter.toUpperCase());
 }

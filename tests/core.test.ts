@@ -13,6 +13,7 @@ import {
 import { CreateOrUpdateLead } from "@/application/CreateOrUpdateLead";
 import { ProcessOutbox } from "@/application/ProcessOutbox";
 import { MemoryStore } from "@/infrastructure/memory";
+import { isAllowedOrigin } from "@/infrastructure/origin";
 import type { Job } from "@/domain/models";
 import { formContent } from "@/content/landing";
 export const valid = {
@@ -38,13 +39,20 @@ describe("validation and identity", () => {
     expect(dedupeKey("QA@example.test", "+919876543210")).toBe(
       dedupeKey("qa@example.test", "+919876543210"),
     ));
-  it("requires consent and demo industry", () => {
+  it("requires consent and allows a demo booking with only contact details", () => {
     expect(leadSchema.safeParse({ ...valid, consent: false }).success).toBe(
       false,
     );
     expect(
-      leadSchema.safeParse({ ...valid, industry: undefined }).success,
-    ).toBe(false);
+      leadSchema.safeParse({
+        kind: "DEMO_BOOKING",
+        full_name: valid.full_name,
+        company_name: valid.company_name,
+        work_email: valid.work_email,
+        mobile: valid.mobile,
+        consent: true,
+      }).success,
+    ).toBe(true);
   });
   it("permits plan enquiries without demo fields", () =>
     expect(
@@ -61,6 +69,26 @@ describe("validation and identity", () => {
     expect(safeMeetingUrl("https://meet.example.test/room")).toBe(
       "https://meet.example.test/room",
     );
+  });
+});
+describe("same-origin request validation", () => {
+  it("allows the served site when its configured canonical URL is stale", () => {
+    const request = new Request("https://marketing.example.test/api/leads", {
+      method: "POST",
+      headers: { origin: "https://marketing.example.test" },
+    });
+    expect(isAllowedOrigin(request, "http://localhost:7005")).toBe(true);
+  });
+  it("still rejects a different browser origin and missing origin", () => {
+    const foreign = new Request("https://marketing.example.test/api/leads", {
+      method: "POST",
+      headers: { origin: "https://attacker.example.test" },
+    });
+    const missing = new Request("https://marketing.example.test/api/leads", {
+      method: "POST",
+    });
+    expect(isAllowedOrigin(foreign, "http://localhost:7005")).toBe(false);
+    expect(isAllowedOrigin(missing, "http://localhost:7005")).toBe(false);
   });
 });
 describe("signature and retry policy", () => {

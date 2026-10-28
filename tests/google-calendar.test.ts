@@ -54,9 +54,18 @@ describe("automatic slots for a connected host", () => {
         { start: "2026-10-26T07:30:00Z", end: "2026-10-26T08:00:00Z" },
       ]);
       const slots = await scheduler.availability("2026-10-26");
-      expect(slots).toContain("2026-10-26T05:00:00.000Z");
-      expect(slots).not.toContain("2026-10-26T07:30:00.000Z");
-      expect(slots).not.toContain("2026-10-26T08:00:00.000Z");
+      expect(slots).toContainEqual({
+        startAt: "2026-10-26T05:00:00.000Z",
+        presenter: "pranesh@bizgenix.ai",
+      });
+      expect(slots).not.toContainEqual({
+        startAt: "2026-10-26T07:30:00.000Z",
+        presenter: "pranesh@bizgenix.ai",
+      });
+      expect(slots).not.toContainEqual({
+        startAt: "2026-10-26T08:00:00.000Z",
+        presenter: "pranesh@bizgenix.ai",
+      });
       expect(slots).toHaveLength(12);
     } finally {
       vi.useRealTimers();

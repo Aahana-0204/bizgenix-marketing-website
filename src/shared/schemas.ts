@@ -29,7 +29,7 @@ export const leadSchema = z
       .transform((v) => v.toLowerCase()),
     mobile: phoneSchema,
     industry: z.enum(formContent.industries).optional(),
-    team_size: z.enum(formContent.teamSizes),
+    team_size: z.enum(formContent.teamSizes).optional(),
     interested_in: z.enum(formContent.interests).optional(),
     plan_interest: z.enum(formContent.plans).optional(),
     key_challenge: z.string().trim().max(2000).optional(),
@@ -41,20 +41,16 @@ export const leadSchema = z
     analytics_consent: z.boolean().default(false),
   })
   .superRefine((data, ctx) => {
-    if (data.kind === "DEMO_BOOKING")
-      for (const key of ["industry", "interested_in"] as const)
+    if (data.kind === "PLAN_ENQUIRY") {
+      for (const key of ["team_size", "plan_interest"] as const)
         if (!data[key])
           ctx.addIssue({
             code: "custom",
             path: [key],
-            message: "Please choose an option",
+            message:
+              key === "team_size" ? "Please choose an option" : "Choose a plan",
           });
-    if (data.kind === "PLAN_ENQUIRY" && !data.plan_interest)
-      ctx.addIssue({
-        code: "custom",
-        path: ["plan_interest"],
-        message: "Choose a plan",
-      });
+    }
   });
 export type LeadInput = z.input<typeof leadSchema>;
 export type ValidLead = z.output<typeof leadSchema>;

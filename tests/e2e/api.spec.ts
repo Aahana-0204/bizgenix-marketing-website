@@ -51,6 +51,22 @@ test("lead API validates origin, normalizes identity and deduplicates", async ({
   );
   expect(await status.json()).toEqual({ status: "PENDING" });
 });
+test("demo booking lead API accepts only the required contact details", async ({
+  request,
+}) => {
+  const response = await request.post("/api/leads", {
+    data: {
+      kind: "DEMO_BOOKING",
+      full_name: "Calendar Guest",
+      company_name: "Example Company",
+      work_email: `calendar-${Date.now()}@example.test`,
+      mobile: "9876543210",
+      consent: true,
+    },
+    headers: { Origin: "http://localhost:3100" },
+  });
+  expect(response.status()).toBe(200);
+});
 test("cron and webhook do not accept unauthenticated calls", async ({
   request,
 }) => {

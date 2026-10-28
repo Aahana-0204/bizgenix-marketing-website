@@ -20,7 +20,7 @@ afterAll(() => db.$disconnect());
 describe.skipIf(!process.env.TEST_DATABASE_URL)(
   "Google booking allocation on PostgreSQL",
   () => {
-    it("allows only one booking per time across both hosts, rejects concurrent duplicates, and recovers a lost Google response", async () => {
+    it("keeps slot capacity independent per host, rejects same-host duplicates, and recovers a lost Google response", async () => {
       const tag = randomUUID();
       const hosts = [`a-${tag}@example.test`, `b-${tag}@example.test`];
       const rules: SchedulingRules = {
@@ -78,7 +78,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
             encryptedRefreshToken: "test-token",
           })),
         });
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 4; i++) {
           const lead = await db.lead.create({
             data: {
               dedupeKey: `${tag}:${i}`,
@@ -94,44 +94,72 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
           leadIds.push(lead.id);
         }
         await expect(
-          scheduler.book(leadIds[0], "attempt", start),
+          scheduler.book(leadIds[0], "attempt", start, hosts[0]),
         ).rejects.toThrow("response lost");
-        const recovered = await scheduler.book(leadIds[0], "attempt", start);
+        const recovered = await scheduler.book(
+          leadIds[0],
+          "attempt",
+          start,
+          hosts[0],
+        );
         expect(recovered.status).toBe("CONFIRMED");
         expect(inserts).toBe(1);
-        // Confirmed reservations must remain globally blocked beyond propagation grace.
+        // Confirmed reservations remain blocked on the selected host.
         await db.calendarReservation.updateMany({
           where: { leadId: leadIds[0] },
           data: { updatedAt: new Date(Date.now() - 3600000) },
         });
         await expect(
-          scheduler.book(leadIds[1], "attempt", start),
+          scheduler.book(leadIds[1], "attempt", start, hosts[0]),
         ).rejects.toThrow("just taken");
         expect(inserts).toBe(1);
-        expect(await scheduler.availability(date)).not.toContain(start);
+        const sameTimeAvailability = await scheduler.availability(date);
+        expect(sameTimeAvailability).not.toContainEqual({
+          startAt: start,
+          presenter: hosts[0],
+        });
+        expect(sameTimeAvailability).toContainEqual({
+          startAt: start,
+          presenter: hosts[1],
+        });
+        const otherHostBooking = await scheduler.book(
+          leadIds[1],
+          "other-host",
+          start,
+          hosts[1],
+        );
+        expect(otherHostBooking.status).toBe("CONFIRMED");
+        expect(inserts).toBe(2);
         const secondStart = new Date(
           Date.parse(start) + 120 * 60000,
         ).toISOString();
         const results = await Promise.allSettled([
-          scheduler.book(leadIds[1], "attempt", secondStart),
-          scheduler.book(leadIds[2], "attempt", secondStart),
+          scheduler.book(leadIds[2], "attempt", secondStart, hosts[0]),
+          scheduler.book(leadIds[3], "attempt", secondStart, hosts[0]),
         ]);
         expect(results.filter((r) => r.status === "fulfilled")).toHaveLength(1);
         expect(results.filter((r) => r.status === "rejected")).toHaveLength(1);
-        expect(inserts).toBe(2);
+        expect(inserts).toBe(3);
         const assigned = await db.calendarReservation.findMany({
           where: { leadId: { in: leadIds } },
         });
         expect(new Set(assigned.map((r) => r.presenter)).size).toBe(2);
-        expect(await scheduler.availability(date)).not.toContain(start);
-        expect(await scheduler.availability(date)).not.toContain(secondStart);
-        expect((await scheduler.book(leadIds[0], "attempt", start)).uid).toBe(
-          recovered.uid,
-        );
-        expect(inserts).toBe(2);
+        const remainingAvailability = await scheduler.availability(date);
+        expect(remainingAvailability).not.toContainEqual({
+          startAt: start,
+          presenter: hosts[0],
+        });
+        expect(remainingAvailability).not.toContainEqual({
+          startAt: secondStart,
+          presenter: hosts[0],
+        });
+        expect(
+          (await scheduler.book(leadIds[0], "attempt", start, hosts[0])).uid,
+        ).toBe(recovered.uid);
+        expect(inserts).toBe(3);
         expect(
           await db.booking.count({ where: { leadId: { in: leadIds } } }),
-        ).toBe(2);
+        ).toBe(3);
       } finally {
         for (const leadId of leadIds)
           await db.outboxJob.deleteMany({

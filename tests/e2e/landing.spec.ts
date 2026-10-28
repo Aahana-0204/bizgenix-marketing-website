@@ -15,6 +15,41 @@ async function fillBase(page: Page) {
   await choose(page, "Team size", "1–5");
   await page.getByRole("checkbox").check();
 }
+async function fillContactDetails(page: Page) {
+  await page.getByLabel("Company name").fill("Example Company");
+  await page.getByLabel("Full name").fill("Test Person");
+  await page.getByLabel("Work email").fill("browser@example.test");
+  await page.getByLabel("Mobile (+91)", { exact: false }).fill("9876543210");
+  await page.getByRole("checkbox").check();
+}
+async function mockAvailability(page: Page) {
+  await page.route("**/api/availability?**", async (route) => {
+    const date = new URL(route.request().url()).searchParams.get("date");
+    await route.fulfill({
+      json: {
+        slots: [
+          {
+            startAt: new Date(`${date}T10:30:00+05:30`).toISOString(),
+            presenter: "khushi@bizgenix.ai",
+          },
+        ],
+        timezone: "Asia/Kolkata",
+      },
+    });
+  });
+}
+async function mockLead(page: Page, preview = false) {
+  await page.route("**/api/leads", (route) =>
+    route.fulfill({
+      json: {
+        leadId: "landing-e2e-lead",
+        statusToken: "landing-e2e-token",
+        eventId: "landing-e2e-event",
+        preview,
+      },
+    }),
+  );
+}
 test("approved content, responsive layout and screenshot", async ({
   page,
 }, info) => {
@@ -36,26 +71,47 @@ test("approved content, responsive layout and screenshot", async ({
     fullPage: true,
   });
 });
-test("demo validation, API acceptance and no invented booking", async ({
+test("demo booking shows host availability first and asks only for contact details", async ({
   page,
 }) => {
+  await mockAvailability(page);
+  await mockLead(page);
+  await page.route("**/api/bookings", async (route) => {
+    const data = route.request().postDataJSON();
+    await route.fulfill({
+      json: {
+        status: "CONFIRMED",
+        uid: "google:e2e-demo",
+        startAt: data.startAt,
+        timezone: "Asia/Kolkata",
+      },
+    });
+  });
   await page.goto("/");
   await rejectCookies(page);
   await page.getByRole("button", { name: "Book Free Demo" }).first().click();
   await expect(page.getByRole("dialog")).toBeVisible();
-  await page.getByRole("button", { name: "Get your slot booked" }).click();
+  await expect(
+    page.getByRole("button", { name: /10:30 am with Khushi/i }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: /10:30 am with Khushi/i }).click();
+  await page.getByRole("button", { name: /Continue with Khushi/ }).click();
+  await expect(page.getByRole("combobox")).toHaveCount(0);
+  await page.getByRole("button", { name: /Book with Khushi/ }).click();
   await expect(page.getByText("Full name is required")).toBeVisible();
-  await fillBase(page);
-  await choose(page, "Industry", "Real Estate");
-  const request = page.waitForResponse(
+  await fillContactDetails(page);
+  const leadRequest = page.waitForResponse(
     (r) => r.url().endsWith("/api/leads") && r.request().method() === "POST",
   );
-  await page.getByRole("button", { name: "Get your slot booked" }).click();
-  expect((await request).status()).toBe(200);
-  await expect(page.getByText("Your details are saved.")).toBeVisible();
+  const bookingRequest = page.waitForResponse(
+    (r) => r.url().endsWith("/api/bookings") && r.request().method() === "POST",
+  );
+  await page.getByRole("button", { name: /Book with Khushi/ }).click();
+  expect((await leadRequest).status()).toBe(200);
+  expect((await bookingRequest).status()).toBe(200);
   await expect(
     page.getByRole("heading", { name: "You’re booked." }),
-  ).toHaveCount(0);
+  ).toBeVisible();
   await page.getByRole("button", { name: "Close enquiry" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });
@@ -75,6 +131,7 @@ test("Get Started redirects to CRM registration", async ({ page }) => {
   await expect(page).toHaveURL(/^https:\/\/crm\.bizgenix\.ai\/register/);
 });
 test("plan enquiries still open the enquiry form", async ({ page }) => {
+  await mockLead(page, true);
   await page.goto("/");
   await rejectCookies(page);
   await page
@@ -109,15 +166,32 @@ test("network failure keeps entered details and offers retry", async ({
   await expect(page.getByLabel("Company name")).toHaveValue("Example Company");
 });
 test("consent and once-only tracking contain no PII", async ({ page }) => {
+  await mockAvailability(page);
+  await mockLead(page);
+  await page.route("**/api/bookings", async (route) => {
+    const data = route.request().postDataJSON();
+    await route.fulfill({
+      json: {
+        status: "CONFIRMED",
+        uid: "google:tracked-demo",
+        startAt: data.startAt,
+        timezone: "Asia/Kolkata",
+      },
+    });
+  });
   await page.goto("/?utm_source=qa&utm_campaign=browser");
   await page.getByRole("button", { name: "Accept", exact: true }).click();
   await page
     .getByRole("button", { name: "Book Free Demo", exact: true })
     .first()
     .click();
-  await fillBase(page);
-  await page.getByRole("button", { name: "Send my enquiry" }).click();
-  await expect(page.getByText("Your preview enquiry was saved.")).toBeVisible();
+  await page.getByRole("button", { name: /10:30 am with Khushi/i }).click();
+  await page.getByRole("button", { name: /Continue with Khushi/ }).click();
+  await fillContactDetails(page);
+  await page.getByRole("button", { name: /Book with Khushi/ }).click();
+  await expect(
+    page.getByRole("heading", { name: "You’re booked." }),
+  ).toBeVisible();
   const entries = await page.evaluate(() => window.dataLayer);
   const leadEvents = entries.filter(
     (v) => (v as { event?: string }).event === "generate_lead",

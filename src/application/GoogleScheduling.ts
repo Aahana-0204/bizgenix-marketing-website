@@ -75,21 +75,25 @@ export class GoogleScheduling {
         endAt: { gt: new Date(`${date}T00:00:00+05:30`) },
       },
     });
-    return candidates.filter((slot) =>
-      hosts.some((host) =>
-        isFree(
-          slot,
-          [
-            ...host.busy,
-            ...holds.map((r) => ({
-              start: r.startAt.toISOString(),
-              end: r.endAt.toISOString(),
-            })),
-          ],
-          this.rules,
-        ),
-      ),
-    );
+    return hosts
+      .flatMap((host) => {
+        const hostHolds = holds
+          .filter((reservation) => reservation.presenter === host.email)
+          .map((reservation) => ({
+            start: reservation.startAt.toISOString(),
+            end: reservation.endAt.toISOString(),
+          }));
+        return candidates
+          .filter((slot) =>
+            isFree(slot, [...host.busy, ...hostHolds], this.rules),
+          )
+          .map((startAt) => ({ startAt, presenter: host.email }));
+      })
+      .sort(
+        (a, b) =>
+          Date.parse(a.startAt) - Date.parse(b.startAt) ||
+          a.presenter.localeCompare(b.presenter),
+      );
   }
   async reconcilePending() {
     // Recover abandoned/ambiguous requests without expiring a potentially real booking.
@@ -125,10 +129,17 @@ export class GoogleScheduling {
       failed: results.filter((r) => r.status === "rejected").length,
     };
   }
-  async book(leadId: string, attempt: string, start: string) {
+  async book(
+    leadId: string,
+    attempt: string,
+    start: string,
+    presenter: string,
+  ) {
     const lead = await this.db.lead.findUnique({ where: { id: leadId } });
     if (!lead || lead.kind !== "DEMO_BOOKING")
       throw new AppError(404, "Enquiry not found.");
+    if (!this.hosts.includes(presenter))
+      throw new AppError(422, "Please choose an available host.");
     const requestKey = hash(`google:${leadId}:${attempt}`);
     let reservation = await this.db.calendarReservation.findUnique({
       where: { requestKey },
@@ -141,7 +152,12 @@ export class GoogleScheduling {
     const end = new Date(
       Date.parse(start) + this.rules.durationMinutes * 60000,
     );
-    const hosts = await this.hostAvailability(indiaDate(new Date(start)));
+    const hosts = await this.hostAvailability(
+      indiaDate(new Date(start)),
+      presenter,
+    );
+    const host = hosts.find((candidate) => candidate.email === presenter);
+    if (!host) throw new AppError(409, "That host is no longer available.");
     reservation = await this.db.$transaction(async (tx) => {
       // Serialize allocation across all application instances, including overlapping starts.
       await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext('bizgenix-google-scheduling'))`;
@@ -149,11 +165,10 @@ export class GoogleScheduling {
         where: { requestKey },
       });
       if (existing && existing.status !== "FAILED") return existing;
-      // One shared booking capacity across every presenter, checked under the
-      // same database lock used to create the reservation.
       const conflict = await tx.calendarReservation.findFirst({
         where: {
           ...this.activeHolds(),
+          presenter,
           startAt: {
             lt: new Date(end.getTime() + this.rules.bufferMinutes * 60000),
           },
@@ -167,41 +182,24 @@ export class GoogleScheduling {
           409,
           "That time was just taken. Please choose another available slot.",
         );
-      const counts = await tx.calendarReservation.groupBy({
-        by: ["presenter"],
-        where: {
-          presenter: { in: this.hosts },
-          status: { in: ["PENDING", "CONFIRMED"] },
-          createdAt: { gte: new Date(Date.now() - 30 * 86400000) },
+      if (!isFree(start, host.busy, this.rules))
+        throw new AppError(
+          409,
+          "That time was just taken. Please choose another available slot.",
+        );
+      if (existing)
+        await tx.calendarReservation.delete({ where: { id: existing.id } });
+      return tx.calendarReservation.create({
+        data: {
+          id: randomUUID(),
+          requestKey,
+          leadId,
+          presenter,
+          eventId: hash(randomUUID()),
+          startAt: new Date(start),
+          endAt: end,
         },
-        _count: { _all: true },
       });
-      const ordered = [...hosts].sort(
-        (a, b) =>
-          (counts.find((r) => r.presenter === a.email)?._count._all || 0) -
-            (counts.find((r) => r.presenter === b.email)?._count._all || 0) ||
-          a.email.localeCompare(b.email),
-      );
-      for (const host of ordered) {
-        if (!isFree(start, host.busy, this.rules)) continue;
-        if (existing)
-          await tx.calendarReservation.delete({ where: { id: existing.id } });
-        return tx.calendarReservation.create({
-          data: {
-            id: randomUUID(),
-            requestKey,
-            leadId,
-            presenter: host.email,
-            eventId: hash(randomUUID()),
-            startAt: new Date(start),
-            endAt: end,
-          },
-        });
-      }
-      throw new AppError(
-        409,
-        "That time was just taken. Please choose another available slot.",
-      );
     });
     return this.complete(reservation, lead);
   }
